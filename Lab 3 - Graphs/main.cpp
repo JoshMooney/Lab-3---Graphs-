@@ -16,7 +16,7 @@ void visit( Node * pNode ) {
 
 int main(int argc, char *argv[]) {
    
-	Graph<int, int> graph(13);
+	Graph<int, int> graph(25);
 	
 	int c = 0;
 	int i = 0;
@@ -37,8 +37,19 @@ int main(int argc, char *argv[]) {
     myfile.close();
 
 	// Now traverse the graph.
-	graph.breadthFirst( graph.nodeArray()[0], visit );
+	//graph.breadthFirst( graph.nodeArray()[0], visit );
 
+	Node *target = graph.nodeArray()[15];
+	Node *origin = graph.nodeArray()[0];
+	graph.breadthFirstSearch(origin, target, visit);
+
+	Node* current = target;
+	while (current != origin)
+	{
+		visit(current);
+		current = current->getPreviousNode();
+	}
+	visit(origin);
 	system("PAUSE");
 	
 }

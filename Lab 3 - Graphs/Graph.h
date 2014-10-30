@@ -58,6 +58,7 @@ public:
     void clearMarks();
     void depthFirst( Node* pNode, void (*pProcess)(Node*) );
     void breadthFirst( Node* pNode, void (*pProcess)(Node*) );
+	void breadthFirstSearch(Node* pNode, Node* target, void(*pProcess)(Node*));
 
 };
 
@@ -319,6 +320,60 @@ void Graph<NodeType, ArcType>::breadthFirst( Node* pNode, void (*pProcess)(Node*
          nodeQueue.pop();
       }
    }  
+}
+
+// ----------------------------------------------------------------
+//  Name:           breadthFirst
+//  Description:    Performs a depth-first traversal the starting node
+//                  specified as an input parameter.
+//  Arguments:      The first parameter is the starting node
+//                  The second parameter is the processing function.
+//  Return Value:   None.
+// ----------------------------------------------------------------
+template<class NodeType, class ArcType>
+void Graph<NodeType, ArcType>::breadthFirstSearch(Node* pNode, Node* target,void(*pProcess)(Node*)) 
+{
+	if (pNode != 0) 
+	{
+		queue<Node*> nodeQueue;
+		// place the first node on the queue, and mark it.
+		nodeQueue.push(pNode);
+		pNode->setMarked(true);
+		bool found = false;
+		// loop through the queue while there are nodes in it.
+		while (nodeQueue.size() != 0 && found == false) 
+		{
+			// add all of the child nodes that have not been 
+			// marked into the queue
+			list<Arc>::const_iterator iter = nodeQueue.front()->arcList().begin();
+			list<Arc>::const_iterator endIter = nodeQueue.front()->arcList().end();
+
+			for (; iter != endIter && found == false; iter++) 
+			{
+				if ((*iter).node() == target)
+				{
+					found = true;
+					(*iter).node()->setPreviousNode(nodeQueue.front());
+				}
+				else if ((*iter).node()->marked() == false) 
+				{
+					// mark the node and add it to the queue.
+					(*iter).node()->setPreviousNode(nodeQueue.front());
+					(*iter).node()->setMarked(true);
+					nodeQueue.push((*iter).node());
+					
+				}
+			}
+
+			// dequeue the current node.
+			nodeQueue.pop();
+		}
+
+		//When found :
+
+		//1. Loop backwards throught the previous til you reach pNode
+		//2. Output this to the screen
+	}
 }
 
 #include "GraphNode.h"

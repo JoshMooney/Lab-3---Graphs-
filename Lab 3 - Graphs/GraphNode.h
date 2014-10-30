@@ -22,6 +22,7 @@ private:
 // Description: data inside the node
 // -------------------------------------------------------
     NodeType m_data;
+	Node* m_previousNode;
 
 // -------------------------------------------------------
 // Description: list of arcs that the node has.
@@ -34,24 +35,42 @@ private:
     bool m_marked;
 
 public:
+	GraphNode()
+	{
+		m_previousNode = NULL;
+	}
+
     // Accessor functions
-    list<Arc> const & arcList() const {
+    list<Arc> const & arcList() const 
+	{
         return m_arcList;              
     }
 
-    bool marked() const {
+    bool marked() const 
+	{
         return m_marked;
     }
 
-    NodeType const & data() const {
+    NodeType const & data() const 
+	{
         return m_data;
     }
+	Node * getPreviousNode()		//Returns the previousNode
+	{
+		return m_previousNode;
+	}
+	void setPreviousNode(Node *node)			//Sets the Previous node to a pointer to a node
+	{
+		m_previousNode = node;
+	}
     // Manipulator functions
-    void setData(NodeType data) {
+    void setData(NodeType data) 
+	{
         m_data = data;
     }
     
-    void setMarked(bool mark) {
+    void setMarked(bool mark) 
+	{
         m_marked = mark;
     }
            
