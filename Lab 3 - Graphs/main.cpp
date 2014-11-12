@@ -1,29 +1,33 @@
 #include "stdafx.h"
 #include <iostream>
 #include <fstream>
+#include <utility>
+#include <string>
 
 #include "Graph.h"
 
 using namespace std;
 
 
-typedef GraphArc<int, int> Arc;
-typedef GraphNode<int, int> Node;
+typedef GraphArc<string, int> Arc;
+typedef GraphNode<string, int> Node;
 
-void visit( Node * pNode ) {
+void visit( Node * pNode ) 
+{
 	cout << "Visiting: " << pNode->data() << endl;
 }
 
 int main(int argc, char *argv[]) {
    
-	Graph<int, int> graph(25);
+	Graph<pair<string,int>, int> graph(6);
 	
-	int c = 0;
+	pair<string,int> c;
 	int i = 0;
 	ifstream myfile;
 	myfile.open ("nodes.txt");
 
-	while ( myfile >> c ) {
+	while ( myfile >> c.first ) 
+	{
 		graph.addNode(c, i++);
 	}
 
@@ -31,17 +35,14 @@ int main(int argc, char *argv[]) {
 	myfile.open("arcs.txt");
 
 	int from, to, weight;
-	while ( myfile >> from >> to >> weight ) {
+	while ( myfile >> from >> to >> weight ) 
+	{
 		graph.addArc(from, to, weight);
 	}
     myfile.close();
 
-	// Now traverse the graph.
-	//graph.breadthFirst( graph.nodeArray()[0], visit );
-
 	Node *target = graph.nodeArray()[15];
 	Node *origin = graph.nodeArray()[0];
-	graph.breadthFirstSearch(origin, target, visit);
 
 	Node* current = target;
 	while (current != origin)

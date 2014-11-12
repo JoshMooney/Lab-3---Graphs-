@@ -45,7 +45,8 @@ public:
     ~Graph();
 
     // Accessors
-    Node** nodeArray() const {
+	Node** nodeArray() const 
+	{
        return m_pNodes;
     }
 
@@ -59,6 +60,7 @@ public:
     void depthFirst( Node* pNode, void (*pProcess)(Node*) );
     void breadthFirst( Node* pNode, void (*pProcess)(Node*) );
 	void breadthFirstSearch(Node* pNode, Node* target, void(*pProcess)(Node*));
+	void UCS(Node* pStart, Node* pDest, void(*pVisitFunc)(Node*), std::vector<Node *>& path);
 
 };
 
@@ -373,6 +375,21 @@ void Graph<NodeType, ArcType>::breadthFirstSearch(Node* pNode, Node* target,void
 
 		//1. Loop backwards throught the previous til you reach pNode
 		//2. Output this to the screen
+	}
+}
+
+template<class NodeType, class ArcType>
+void Graph<NodeType, ArcType>::UCS(Node* pStart, Node* pDest, void(*pVisitFunc)(Node*), std::vector<Node *>& path)
+{
+	vector<Node*> pq;		//create a new priority Queue
+	int distanceS = 0;
+
+	list<Arc>::const_iterator iter = nodeQueue.front()->arcList().begin();
+	list<Arc>::const_iterator endIter = nodeQueue.front()->arcList().end();
+
+	for (; iter != endIter && found == false; iter++)
+	{
+		(*iter).node()->
 	}
 }
 

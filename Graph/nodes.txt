@@ -1,9 +1,6 @@
-a
-b
-c
-d
-e
-f
-g
-h
-i
+Aldar
+Boldar
+Coldar
+Daldar
+Eldar
+Foldar
