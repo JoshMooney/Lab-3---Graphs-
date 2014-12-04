@@ -51,10 +51,6 @@ public:
         return m_marked;
     }
 
-    NodeType const & data() const 
-	{
-        return m_data;
-    }
 	Node * getPreviousNode()		//Returns the previousNode
 	{
 		return m_previousNode;
@@ -68,6 +64,11 @@ public:
 	{
         m_data = data;
     }
+
+	NodeType & getData()
+	{
+		return m_data;
+	}
     
     void setMarked(bool mark) 
 	{
