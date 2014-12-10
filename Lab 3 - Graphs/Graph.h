@@ -64,7 +64,8 @@ public:
 	void UCS(Node* pStart, Node* pDest, vector<Node *> & path, void(*pProcess)(Node*));
 	void UCSFindAllPaths(Node* pStart, vector<pair<string, int>> & map, void(*pOutPut)(vector<Node*>));
 	void ResetData(Node& node);
-	void UnmarkNodes(vector<string> exclusionList, Node* pCurrent);
+	void UnmarkNodes(Node* pCurrent);
+	void setValueToInfinate(Node* pNode);
 
 };
 
@@ -402,6 +403,7 @@ void Graph<NodeType, ArcType>::ResetData(Node& node)
 template<class NodeType, class ArcType>
 void Graph<NodeType, ArcType>::UCS(Node* pStart, Node* pDest, vector<Node *> & path, void(*pProcess)(Node*))
 {
+	UnmarkNodes(pStart);		//Unmarks all nodes sets there weight to max and sets there previous pointer to NULL
 	priority_queue<Node*, vector<Node*>, NodeSearchCostComparer<NodeType, ArcType>> pq;		//create a new priority Queue 
 	pStart->setData(pair<string, int>(pStart->getData().first, 0));
 	pq.push(pStart);
@@ -432,26 +434,25 @@ void Graph<NodeType, ArcType>::UCS(Node* pStart, Node* pDest, vector<Node *> & p
 		}//End For
 		pq.pop();
 	}//End While
-	cout << endl;
-	path.push_back(pDest);
+
+	while (pDest != NULL)
+	{
+		path.push_back(pDest);
+		pDest = pDest->getPreviousNode();
+	}
 }
 
 template<class NodeType, class ArcType>
 void Graph<NodeType, ArcType>::UCSFindAllPaths(Node* pStart, vector<pair<string, int>> & map, void(*pOutPut)(vector<Node*>))
 {
 	priority_queue<Node*, vector<Node*>, NodeSearchCostComparer<NodeType, ArcType>> pq;		//create a new priority Queue 
-	vector<Node *> outputList;
-
+	
 	pStart->setData(pair<string, int>(pStart->getData().first, 0));
-	outputList.push_back(pStart);
 	pq.push(pStart);
-	pOutPut(outputList);
+
 	pStart->setMarked(true);
 	Node* pCurrent = pStart;
 	Node* pNext = pStart;
-	vector<string> exclusionList;
-	bool nextNode = true;
-	int index = 0;
 
 	while (!pq.empty() && pCurrent != NULL)
 	{
@@ -460,50 +461,37 @@ void Graph<NodeType, ArcType>::UCSFindAllPaths(Node* pStart, vector<pair<string,
 
 		for (; iter != endIter; iter++)
 		{
-			int weight = pq.top()->getArc((*iter).node())->weight() + pq.top()->getData().second;
-			if (weight < (*iter).node()->getData().second)
+			if ((*iter).node()->getData().first != pCurrent->getData().first)
 			{
-				(*iter).node()->setData(pair<string, int>((*iter).node()->getData().first, weight));
-				(*iter).node()->setPreviousNode(pq.top());
+				int weight = pq.top()->getArc((*iter).node())->weight() + pq.top()->getData().second;
+
+				if (weight < (*iter).node()->getData().second)
+				{
+					(*iter).node()->setData(pair<string, int>((*iter).node()->getData().first, weight));
+					//(*iter).node()->setPreviousNode(pq.top());
+				}
+				if ((*iter).node()->marked() == false)
+				{
+					pq.push((*iter).node());
+					cout << pCurrent->getData().first + " - " + (*iter).node()->getData().first << " (" << weight << ")" << endl;
+					map.push_back(pair<string, int>(pCurrent->getData().first + " - " + (*iter).node()->getData().first, weight));
+					//cout << pCurrent->getData().first << " - " << (*iter).node()->getData().first << " :" << weight << endl;
+					(*iter).node()->setMarked(true);
+				}
 			}
-			if ((*iter).node()->marked() == false)
-			{
-				pq.push((*iter).node());
-				map.push_back(pair<string, int>(pCurrent->getData().first + " - " + (*iter).node()->getData().first, weight));
-				(*iter).node()->setMarked(true);
-			}	
 		}
 		pq.pop();
-		if (nextNode)
-		{
-			if (!pq.empty())
-				pNext = pq.top();
-			else
-				pNext = NULL;
-			nextNode = false;
-		}
-		
-		if (pq.empty() && pNext != NULL)
-		{
-			exclusionList.push_back(pCurrent->getData().first);
-			pCurrent = pNext;
-			UnmarkNodes(exclusionList, pCurrent);
-			pq.push(pNext);
-			nextNode = true;
-		}
-
-		//Unmark all Again except what ones I've been to
-
 	}
 	cout << endl;
-	//map.push_back(pDest);
 }
 
 template<class NodeType, class ArcType>
-void Graph<NodeType, ArcType>::UnmarkNodes(vector<string> exclusionList, Node* pCurrent)
+void Graph<NodeType, ArcType>::UnmarkNodes(Node* pCurrent)
 {
 	priority_queue<Node*, vector<Node*>, NodeSearchCostComparer<NodeType, ArcType>> pq;		//create a new priority Queue 
 	pq.push(pCurrent);
+
+	setValueToInfinate(pCurrent);
 	while (!pq.empty())
 	{
 		list<Arc>::const_iterator iter = pq.top()->arcList().begin();		//Get iter to cycle through all the Arcs on the node
@@ -511,22 +499,22 @@ void Graph<NodeType, ArcType>::UnmarkNodes(vector<string> exclusionList, Node* p
 
 		for (; iter != endIter; iter++)
 		{
-			for (int i = 0; i < exclusionList.size(); i++)
+			setValueToInfinate((*iter).node());
+			(*iter).node()->setPrevious(NULL);
+			if ((*iter).node()->marked() == true)
 			{
-				if ((*iter).node()->marked() == true && (*iter).node()->getData().first == exclusionList.at(i))
-				{
-					(*iter).node()->setMarked(true);
-					break;
-				}
-				else
-				{
 					(*iter).node()->setMarked(false);
-				}
-			}		
-			pq.push((*iter).node());
+					pq.push((*iter).node());
+			}
 		}
 		pq.pop();
 	}
+}
+
+template<class NodeType, class ArcType>
+void Graph<NodeType, ArcType>::setValueToInfinate(Node* pNode)
+{
+	pNode->setData(pair<string, int>(pNode->getData().first, INT_MAX));
 }
 
 #include "GraphNode.h"

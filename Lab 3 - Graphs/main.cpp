@@ -12,6 +12,8 @@ using namespace std;
 typedef GraphArc<string, int> Arc;
 typedef GraphNode<pair<string, int>, int> Node;
 
+void Nothing(Node * pNode)	{}
+
 void visit(Node * pNode)
 {
 	cout << "Visiting: " << pNode->getData().first << endl;
@@ -27,6 +29,11 @@ void AllRoutes(vector<Node *> pNode)
 		cout << "Journey: " << pNode.at(i)->getData().first << " (" << pNode.at(i)->getData().second << ")"<< endl;
 	}
 	cout << endl;
+}
+
+void MovePathToMap()
+{
+
 }
 
 int main(int argc, char *argv[])
@@ -54,9 +61,21 @@ int main(int argc, char *argv[])
 	}
 	myfile.close();
 
-	Node *origin = graph.nodeArray()[0];
-	vector<pair<string, int>> map;
-	graph.UCSFindAllPaths(origin, map, AllRoutes);
+
+	vector<Node *> path;
+
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = i + 1; j <= 5; j++)
+		{
+			path.clear();
+			graph.UCS(graph.nodeArray[i], graph.nodeArray[j], path, Nothing);
+			MovePathToMap();
+		}
+	}
+
+
+
 
 	system("PAUSE");
 }
